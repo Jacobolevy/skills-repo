@@ -4,7 +4,7 @@ A collection of custom AI agent skills for Claude Code, Cursor, and Codex.
 
 ## Skills
 
-### [`localization-guidelines`](./localization-guidelines/)
+### [`localization-keys-creator`](./localization-keys-creator/)
 Localization (i18n) skill for Wix projects. Supports three modes:
 - **Create** — Generate new translation keys following breadcrumb structure (`feature.page.element`)
 - **Review** — Check existing keys against rules
