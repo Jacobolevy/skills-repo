@@ -1,5 +1,5 @@
 ---
-name: localization-guidelines
+name: localization-keys-creator
 description: >-
   Creates and reviews localization (i18n) keys following Wix best practices.
   Use when creating new translation keys, reviewing existing keys for compliance,
