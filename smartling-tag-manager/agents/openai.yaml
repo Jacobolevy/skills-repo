@@ -1,0 +1,4 @@
+interface:
+  display_name: "Smartling Tag Manager"
+  short_description: "Tag Smartling strings by key list"
+  default_prompt: "Use $smartling-tag-manager to find Smartling strings from a key list and add a tag in bulk using Smartling MCP."
