@@ -123,24 +123,26 @@ If a story renders key names instead of strings (e.g. `my-component.title` appea
 **1. Find all keys used by the component:**
 ```bash
 grep -rh "t(" src/components/MyComponent/ | grep -oE "'[a-z][^']+'" | sort -u
-# Also check Trans component i18nKey props:
 grep -rh 'i18nKey="' src/components/MyComponent/ | grep -oE '"[a-z][^"]+"' | sort -u
 ```
 
-**2. Find the locale file:**
-```bash
-find src -name "messages_en.json" -o -name "en.json" -o -name "en-US.json" | grep -v node_modules
-```
+**2. Get the real strings from the source of truth.**
 
-**3. Detect interpolation syntax from existing values in that file:**
+⛔ **NEVER invent or guess translation strings.** Key names are not strings.
+
+Ask the user: **"These keys are missing from the locale file. What is the source of truth for translations in this project? (e.g. Babel, Smartling, Phrase, Lokalise)"**
+
+Then retrieve the actual strings from there. Do not write any string to the locale file until you have the real value confirmed by the user or fetched from the translation tool.
+
+**3. Detect interpolation syntax from existing values:**
 ```bash
 grep -m 5 "{" path/to/locale/en.json
 ```
 
-**4. Add missing keys using the DETECTED syntax** — never hardcode `{var}` or `{{var}}`:
+**4. Add the confirmed strings using the DETECTED syntax:**
 ```json
-"my-component.title": "My Title",
-"my-component.subtitle": "Hello [DETECTED_SYNTAX]contactName[DETECTED_SYNTAX]"
+"my-component.title": "[VALUE FROM BABEL/TRANSLATION TOOL]",
+"my-component.subtitle": "[VALUE FROM BABEL/TRANSLATION TOOL] [DETECTED_SYNTAX]param[/DETECTED_SYNTAX]"
 ```
 
 ## Step 7 — Verify
@@ -155,7 +157,8 @@ grep -m 5 "{" path/to/locale/en.json
 | Problem | Cause | Fix |
 |---|---|---|
 | `X is not a function` on mount | Analytics function missing from installed package | Polyfill in stories file (Step 5) |
-| Shows key names as text | Key missing from locale file | Add key with correct interpolation syntax (Step 6) |
+| Shows key names as text | Key missing from locale file | Get real string from Babel/translation tool, NEVER invent it (Step 6) |
 | Interpolation params shown literally (`{{var}}`) | Wrong brace syntax for this project | Detect and match the existing syntax (Step 2) |
+| Wrong translation text | String was guessed from key name | ⛔ NEVER infer strings from key names — always get from source of truth |
 | Story pattern doesn't match project | Copied template blindly | Always read existing stories first (Step 2) |
 | Date in the past breaks component | Mock uses stale date | Override with `addDays(new Date(), N)` |
