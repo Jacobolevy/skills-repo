@@ -126,13 +126,11 @@ grep -rh "t(" src/components/MyComponent/ | grep -oE "'[a-z][^']+'" | sort -u
 grep -rh 'i18nKey="' src/components/MyComponent/ | grep -oE '"[a-z][^"]+"' | sort -u
 ```
 
-**2. Get the real strings from the source of truth.**
+**2. Get the real strings from Babel — always.**
 
 ⛔ **NEVER invent or guess translation strings.** Key names are not strings.
 
-Ask the user: **"These keys are missing from the locale file. What is the source of truth for translations in this project? (e.g. Babel, Smartling, Phrase, Lokalise)"**
-
-Then retrieve the actual strings from there. Do not write any string to the locale file until you have the real value confirmed by the user or fetched from the translation tool.
+Babel is always the source of truth. Use the Babel MCP to fetch the actual string for each missing key. Do not write any string to the locale file until you have retrieved the real value from Babel.
 
 **3. Detect interpolation syntax from existing values:**
 ```bash
