@@ -130,7 +130,25 @@ grep -rh 'i18nKey="' src/components/MyComponent/ | grep -oE '"[a-z][^"]+"' | sor
 
 ⛔ **NEVER invent or guess translation strings.** Key names are not strings.
 
-Babel is always the source of truth. Use the Babel MCP to fetch the actual string for each missing key. Do not write any string to the locale file until you have retrieved the real value from Babel.
+Babel is the sole source of truth. Use the **Babel MCP** (`mcp__babel__babel__search_keys`) to fetch the actual English value for every missing key. Never write any string to the locale file until you have the real value from Babel.
+
+**How to find the projectId:**
+Search without a projectId first — Babel will return keys with their projectId in the result:
+```
+mcp__babel__babel__search_keys({ name: "one.of.your.keys" })
+```
+Then use the returned `projectId` for all subsequent searches.
+
+**How to fetch keys in bulk:**
+```
+mcp__babel__babel__search_keys({
+  projectId: "<id from above>",
+  searchExpression: "my-component",  // partial match across all keys in that namespace
+  locale: "en",
+  limit: 50
+})
+```
+Use `searchExpression` for partial matches (namespace prefix), `name` for exact key lookups.
 
 **3. Detect interpolation syntax from existing values:**
 ```bash
@@ -139,8 +157,8 @@ grep -m 5 "{" path/to/locale/en.json
 
 **4. Add the confirmed strings using the DETECTED syntax:**
 ```json
-"my-component.title": "[VALUE FROM BABEL/TRANSLATION TOOL]",
-"my-component.subtitle": "[VALUE FROM BABEL/TRANSLATION TOOL] [DETECTED_SYNTAX]param[/DETECTED_SYNTAX]"
+"my-component.title": "[EXACT VALUE FROM BABEL]",
+"my-component.subtitle": "[EXACT VALUE FROM BABEL with {param} in detected syntax]"
 ```
 
 ## Step 7 — Verify
