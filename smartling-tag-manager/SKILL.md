@@ -9,13 +9,27 @@ Resolve Smartling string hashcodes from user-provided key names, then add one or
 
 Do not use environment variables, raw Smartling credentials, or direct HTTP calls. Prefer Smartling MCP tools for discovery, matching, and tagging.
 
+## Tag naming rules
+
+Tags use human readable text — NO hyphens or kebab-case.
+
+**Before applying a new tag**, search for existing tags in the project that match the current feature:
+1. Use `smartling_list_jobs` or `smartling_search_strings` to scan recent tags in the project
+2. If an existing tag clearly matches the current task (same feature, same scope), propose reusing it
+3. Present the suggestion to the user before proceeding: `"Found existing tag 'BE Upsell to Yearly' — reuse it or use a new name?"`
+
+**If UoU / Viewer:**
+- Add `"viewer"` as a second tag alongside the task tag
+- Both tags are applied to the same set of hashcodes in one run
+
 ## Inputs
 
 Collect only what is needed:
 
 - `project_id`
-- `tag_names[]`
+- `tag_names[]` — one task tag (e.g. `"BE Upsell to Yearly"`) + optionally `"viewer"` if UoU
 - `keys[]`
+- `is_uou` (optional, default false) — if true, automatically include `"viewer"` in `tag_names[]`
 
 Accept keys from:
 
@@ -85,6 +99,22 @@ For keys not found in the exact pass, run a fallback search:
 
 Do not mark a key as found unless the returned match is plausibly the same key family. The goal is to preserve the script's "exact first, cautious partial second" behavior, not maximize recall at any cost.
 
+### 4.5 Babel fallback for still-unresolved keys
+
+If any keys remain unresolved after the exact and partial passes, use Babel to find the correct Smartling project:
+
+1. Call `babel__search_keys` with `name = <one_unresolved_key>` (exact)
+2. Take the `projectId` from the first result
+3. Call `babel__get_project` with that `projectId` → read `configuration.translatorProjectId`
+4. If `translatorProjectId` differs from the current `project_id`:
+   - Re-run the exact pass (step 3) for all still-unresolved keys using the new project ID
+   - Keys found here belong to a **different Smartling project** — flag them separately in the report
+   - Tag them in their correct project with `smartling_add_tags_to_strings`
+   - The orchestrator must create a **separate job** for these keys (they cannot share a job with the primary project's keys)
+5. If `translatorProjectId` matches the current `project_id`, the keys simply don't exist in Smartling yet — mark as not found
+
+Skip this step if all keys were resolved in steps 3–4.
+
 ### 5. Deduplicate hashcodes and tag in bulk
 
 After both passes:
@@ -106,6 +136,7 @@ Always report:
 - not found keys
 - total unique hashcodes tagged
 - whether matches came from exact or partial search
+- **`total_wordcount`** — sum of `totalWordCount` from all `smartling_search_strings` responses for matched strings. Always compute and include this. The orchestrator passes it downstream to the job manager and Monday.
 
 When possible, include a Smartling dashboard URL in this form:
 

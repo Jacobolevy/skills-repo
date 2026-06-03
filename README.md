@@ -1,17 +1,13 @@
-# Skills
+# Localization Skills
 
-A collection of custom AI agent skills for Claude Code, Cursor, and Codex.
+Claude Code skills for the localization workflow at Wix.
 
 ## Skills
 
-### [`localization-keys-creator`](./localization-keys-creator/)
-Localization (i18n) skill for Wix projects. Supports three modes:
-- **Create** — Generate new translation keys following breadcrumb structure (`feature.page.element`)
-- **Review** — Check existing keys against rules
-- **Fix** — Scan code for localization violations
-
-### [`smartling-tag-manager`](./smartling-tag-manager/)
-Smartling API integration for bulk tagging strings. Resolves project IDs, accepts keys from CSV/clipboard/file, deduplicates and tags in bulk batches of 1000.
-
-### [`babel-figma-screenshots`](./babel-figma-screenshots/)
-Batch workflow that maps Babel key names to Figma design sections and uploads screenshots. Handles annotation matching, frame exploration, batch export, and per-key status reporting.
+| Skill | Description |
+|---|---|
+| `babel-figma-screenshots` | Maps Babel key names to Figma design sections and uploads screenshots for context |
+| `localization-keys-creator` | Creates, reviews, and fixes localization keys in Babel |
+| `localization-slack-on-call` | Handles Slack on-call localization requests |
+| `localization-workflow` | End-to-end orchestrator: Jira → Smartling tags → Babel screenshots → job → Monday |
+| `smartling-tag-manager` | Adds Smartling tags to strings by key list, spreadsheet, or export |
