@@ -16,11 +16,21 @@ CODEX_DIR="${HOME}/.codex/skills"
 REPO_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 SKILLS=(
+  # Orchestrator
+  localization-workflow
+
+  # Sub-skills invoked by localization-workflow
   babel-figma-screenshots
+  content-scoring-framework
+  jira-reader
+  monday-localizer
+  smartling-job-manager
+  smartling-post-auth
+  smartling-tag-manager
+
+  # Standalone
   localization-keys-creator
   localization-slack-on-call
-  localization-workflow
-  smartling-tag-manager
 )
 
 list_skills() {
