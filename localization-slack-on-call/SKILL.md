@@ -304,9 +304,9 @@ Use the channel ID and thread timestamp from the original message URL. The link 
   Strings URL: [url]
 
 **Monday:**
-  Item: [name] → https://wix.monday.com/boards/9991668759/pulses/[item_id]
+  Parent item: https://wix.monday.com/boards/9991668759/pulses/12180072682
   Subitem: [name] (ETA: [date] / Ready for ETA)
-  Slack link: set in Jira column ✓
+  Slack link: set in subitem `link_mkxf9rz2` ✓
   GA artifact: [name] (label created if new)
   Score color: [Green / Yellow / Red]
 
