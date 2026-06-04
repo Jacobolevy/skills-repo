@@ -128,7 +128,7 @@ Always set `dropdown_mkvqg648` with `create_labels_if_missing: true`. If the com
 
 ### Create subitem
 ```graphql
-mutation { create_subitem(parent_item_id: {item_id}, item_name: "{task_name}") { id board { id } } }
+mutation { create_subitem(parent_item_id: 12180072682, item_name: "{task_name}") { id board { id } } }
 ```
 
 **Call 1 — all columns except ETA (left-to-right):**
@@ -138,6 +138,7 @@ mutation { create_subitem(parent_item_id: {item_id}, item_name: "{task_name}") {
 4. `link_mkvq6z0h` → `{"url": "{smartling_strings_url}", "text": "Smartling"}`
 5. `multiple_person_mkzdq7y4` → `{"personsAndTeams": [{"id": 14828021, "kind": "person"}]}`
 6. `color_mkvqrkfy` → `{"label": "Account + Viewer"}` only if `is_uou = true`
+7. `link_mkxf9rz2` → `{"url": "{slack_url}", "text": "Slack"}` — Slack message URL at subitem level
 
 **Call 2 — ETA only (always last):**
 - wordcount ≤ 80 → `date0 = {"date": "YYYY-MM-DD"}`
