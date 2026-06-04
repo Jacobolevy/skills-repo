@@ -283,10 +283,10 @@ Post-auth: none (Red → human translation)              ← Red
 After Phase 6.5 is complete, reply to the original Slack thread using `mcp__Webrix__slack__reply_to_thread`:
 
 ```
-Here is the task: https://wix.monday.com/boards/9991668759/pulses/{item_id}. ETA is {ETA_date} 🟢
+Here is the task: https://wix.monday.com/boards/9991668759/pulses/12180072682. ETA is {ETA_date} 🟢
 ```
 
-Use the channel ID and thread timestamp from the original message URL.
+Use the channel ID and thread timestamp from the original message URL. The link always points to the fixed parent item `12180072682`.
 
 ---
 
