@@ -327,8 +327,7 @@ Phases:
 - **Always pass `locale_workflows` to `smartling_authorize_job`** — never bare-authorize without it; this scopes authorization to exactly 21 (or 36) locales. If `locale_workflows` fails, fall back to bare authorize and warn.
 - When job creation fails → add to existing IN_PROGRESS job for same feature (do not block the workflow); note locale count mismatch if applicable
 - Always set `dropdown_mkvqg648` on the subitem — map company name to label using the table above; use `create_labels_if_missing: true`
-- Always put the Slack message URL in `COL_JIRA` (`link_mkvjmysa`) with text `"Slack"` — there is no Jira ticket
-- Use company name in `COL_MORE_INFO` as stream label
-- ETA on main item = same date as subitem ETA (only when wordcount ≤ 80)
+- **Never create a new main item** — always create a subitem under parent `12180072682`
+- Always put the Slack message URL in the **subitem** `link_mkxf9rz2` column with text `"Slack"`
 - Always set `color_mm3qayc2` on the subitem (Phase 6.5) for every score — Green, Yellow, or Red
 - Babel sync: skip if "In Dev center"; trigger for Green and Yellow scores
