@@ -104,30 +104,14 @@ https://dashboard.smartling.com/app/projects/{project_id}/strings/?limit=25&offs
 
 ## Phase 4: Monday item
 
-### Group lookup
-Get board schema (`get_board_schema` on board `9991668759`) and find a group whose title contains `company` (case-insensitive). 
+### Fixed parent item
+**Do NOT create a new main item.** All on-call tasks are created as subitems under the fixed parent item:
 
-Examples: "Online Programs" → "Online Programs - on call" (`group_mkzkba0z`)
-
-If no group matches → use Premium group (`group_mkxhtynn`).
-
-### Create main item
-Use `all_monday_api` GraphQL (column values as JSON string).
-
-```graphql
-mutation {
-  create_item(board_id: 9991668759, group_id: "{group_id}", item_name: "{task_name}", column_values: "...") { id }
-}
+```
+Parent item ID: 12180072682  (board 9991668759)
 ```
 
-Column values to set:
-- `person` → `{"personsAndTeams": [{"id": 14828021, "kind": "person"}]}`
-- `color_mkvj6xjp` → `{"label": "In progress"}`
-- `numeric_mm0y1t7h` → wordcount
-- `link_mkvjsw67` → `{"url": " ", "text": "{company}"}` — company name as stream label
-- `link_mkvjmysa` → `{"url": "{slack_url}", "text": "Slack"}` — Slack message URL in the Jira column
-- `link_mkxhhyv6` → figma_url if present
-- `date_mm0yhmf9` → ETA date (only if wordcount ≤ 80)
+Skip group lookup and main item creation entirely.
 
 ### Related product label (subitem)
 
