@@ -158,14 +158,14 @@ GET https://www.hebcal.com/hebcal?v=1&cfg=json&year={YEAR}&c=off&i=on&lg=s&maj=o
 Count as non-working any item where `category="holiday"`, `subcat="major"`, title does NOT contain `(CH''M)` (Chol HaMoed), and does NOT start with `Erev`.
 
 ### GA artifact column
-Set `dropdown_mkzcwa5s` on board `9991668759` using the short artifact name.
+Set `dropdown_mkzcwa5s` on the **parent item** (board `9991668759`, item `12180072682`) using the short artifact name.
 Always use `create_labels_if_missing: true` — if the label doesn't exist in the dropdown yet, it will be created automatically.
 
 ```graphql
 mutation {
   change_column_value(
     board_id: 9991668759,
-    item_id: {item_id},
+    item_id: 12180072682,
     column_id: "dropdown_mkzcwa5s",
     value: "{\"labels\": [\"{short_artifact_name}\"]}",
     create_labels_if_missing: true
