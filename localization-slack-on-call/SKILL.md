@@ -137,12 +137,8 @@ Pass `score_color` to Phase 6.5.
 
 ## Rules
 
-- Always use `all_monday_api` GraphQL for Monday mutations — column values as JSON strings
-- **Never authorize in Phase 2** — always defer authorization to Phase 6.5 after content scoring
-- **Always pass `locale_workflows` to `smartling_authorize_job`** — never bare-authorize without it; this scopes authorization to exactly 21 (or 36) locales. If `locale_workflows` fails, fall back to bare authorize and warn.
-- When job creation fails → add to existing IN_PROGRESS job for same feature (do not block the workflow); note locale count mismatch if applicable
-- Always set `dropdown_mkvqg648` on the subitem — map company name to label using the table above; use `create_labels_if_missing: true`
-- **Never create a new main item** — always create a subitem under parent `12180072682`
-- Always put the Slack message URL in the **subitem** `link_mkxf9rz2` column with text `"Slack"`
-- Always set `color_mm3qayc2` on the subitem (Phase 6.5) for every score — Green, Yellow, or Red
-- Babel sync: skip if "In Dev center"; trigger for Green and Yellow scores
+- **Do NOT create or update any Monday item or subitem**
+- **Do NOT reply to the Slack thread**
+- **Do NOT trigger Babel sync**
+- **Do NOT authorize the Smartling job**
+- Stop after Phase 5 — output only the content score table and recommendation
