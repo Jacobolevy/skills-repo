@@ -113,134 +113,26 @@ The skill returns a `final_score` (1.0–3.0) and a color:
 
 Pass `score_color` to Phase 6.5.
 
-## Phase 6.5: Post-auth Smartling actions
-
-### Step 1 — Find LLM workflow UIDs (Green and Yellow only)
-
-```
-smartling_list_workflows(project_id, keyword: "LLM")
-```
-
-- GREEN workflow: name contains "LLM" and "GREEN" → UID `972739bc38e4` (shared across projects)
-- YELLOW workflow: name contains "LLM" and "YELLOW" → UID `0d48ce8988bf` (shared across projects)
-
-Skip this step if score is Red.
-
-### Step 2 — Authorize the job with the selected workflow
-
-Build a `locale_workflows[]` array mapping **every target locale** for this task (21 if `is_uou = false`, 36 if `is_uou = true`) to the selected workflow UID:
-
-```json
-locale_workflows: [
-  { "target_locale_id": "cs-CZ", "workflow_uid": "<selected_uid>" },
-  { "target_locale_id": "da-DK", "workflow_uid": "<selected_uid>" },
-  ...all 21 (or 36) locales...
-]
-```
-
-Call:
-```
-smartling_authorize_job(
-  project_id = project_id,
-  job_uid = job_uid,
-  locale_workflows = <array above>
-)
-```
-
-> **Always pass `locale_workflows`** — never call bare `smartling_authorize_job` without it. This ensures authorization is scoped to the correct 21 (or 36) locales even when reusing a job that has more locales.
-
-> **If `locale_workflows` call fails** (some projects reject it on IN_PROGRESS jobs): fall back to bare `smartling_authorize_job` without arguments, note the fallback in the output, and warn that all job locales may be authorized.
-
-For Red score: skip authorization entirely — leave the job in AWAITING_AUTHORIZATION.
-
-### Step 3 — Sync Babel (Green and Yellow only)
-
-Resolve the Babel project ID from the `Babel project` field in the Slack message:
-1. If it says **"In Dev center"** → skip Babel sync entirely
-2. Otherwise extract project ID from the Babel URL → call `babel__sync_project(projectId)`
-
-This sync is async — no need to wait.
-
-### Step 4 — Update Monday score color column (all scores)
-
-Always set `color_mm3qayc2` on the subitem — for every score:
-
-```graphql
-mutation {
-  change_column_value(board_id: 9991673115, item_id: {monday_subitem_id},
-    column_id: "color_mm3qayc2",
-    value: "{\"label\": \"Green\"}") { id }   # or "Yellow" or "Red"
-}
-```
-
-Use `mcp__Webrix__monday__all_monday_api` for this call.
-
-### Step 5 — Green score: set Task Status = Done
-
-**Only when score = Green**, set on the subitem:
-
-```graphql
-change_column_value(board_id: 9991673115, item_id: {subitem_id},
-  column_id: "color_mkyf691e", value: "{\"label\": \"Done\"}")
-```
-
-### Phase 6.5 report line
-
-```
-Phase 6.5 — Post-auth:
-✓ Re-authorized with LLM GREEN workflow (21 locales)   ← Green
-✓ Babel sync triggered
-✓ Monday score color → Green
-✓ Task Status → Done
-
-✓ Re-authorized with LLM YELLOW workflow (21 locales)  ← Yellow
-✓ Babel sync triggered
-✓ Monday score color → Yellow
-
-Post-auth: none (Red → human translation)              ← Red
-✓ Monday score color → Red
-```
-
-## Phase 7: Reply to Slack thread
-
-After Phase 6.5 is complete, reply to the original Slack thread using `mcp__Webrix__slack__reply_to_thread`:
-
-```
-Here is the task: https://wix.monday.com/boards/9991668759/pulses/12180072682. ETA is {ETA_date} 🟢
-```
-
-Use the channel ID and thread timestamp from the original message URL. The link always points to the fixed parent item `12180072682`.
-
 ---
 
 ## Output
 
 ```
-## On-Call Localization — Done
+## Content Score — [task_name]
 
-**Task:** [task_name]
-**Company:** [company]
 **Strings:** [N] found, wordcount: [W] words
+**Score:** [X.XX] → 🟢 Green / 🟡 Yellow / 🔴 Red
 
-**Smartling:**
-  Job: [job_name] ([job_uid]) — [created / added to existing IN_PROGRESS]
-  Strings URL: [url]
+| Dimension | Weight | Score | Weighted |
+|---|---|---|---|
+| Company | 25% | [X] | [X.XX] |
+| Impact | 25% | [X] | [X.XX] |
+| Complexity | 50% | [X] | [X.XX] |
+| **Total** | | | **[X.XX]** |
 
-**Monday:**
-  Parent item: https://wix.monday.com/boards/9991668759/pulses/12180072682
-  Subitem: [name] (ETA: [date] / Ready for ETA)
-  Slack link: set in subitem `link_mkxf9rz2` ✓
-  GA artifact: [name] (label created if new)
-  Score color: [Green / Yellow / Red]
+**Reasoning:** [brief explanation of each dimension score]
 
-Phases:
-  ✓ 1. Strings resolved ([N] found, [K] not found)
-  [✓/⚠] 2. Smartling job [created / reused / failed + fallback used] — pending auth
-  [✓/—] 3. Screenshots [in Smartling / uploaded / pending]
-  ✓ 4. Monday item & subitem created (ETA: [date])
-  ✓ 5. Content score: [X.X] → [Green / Yellow / Red]
-  ✓ 6.5. [Re-authorized with LLM GREEN/YELLOW / skipped (Red)] · [Babel sync triggered / skipped] · Monday score color → [color]
-  ✓ 7. Slack thread replied with Monday URL + ETA
+**Recommendation:** [Green → LLM GREEN workflow / Yellow → LLM YELLOW workflow / Red → Human Translation]
 ```
 
 ## Rules
