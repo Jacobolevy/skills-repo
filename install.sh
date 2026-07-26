@@ -17,6 +17,7 @@ REPO_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 SKILLS=(
   babel-figma-screenshots
+  babel-untranslated-audit
   localization-keys-creator
   localization-slack-on-call
   localization-workflow
