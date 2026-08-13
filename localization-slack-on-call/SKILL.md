@@ -1,11 +1,17 @@
 ---
 name: localization-slack-on-call
-description: Use when a Slack on-call channel message arrives containing a structured localization request with fields like Task, Company, Babel project, Tag/List of keys, Urgency, Viewer.
+description: Use when a Slack on-call channel message arrives containing a structured localization request with fields like Task, Company, Babel project, Tag/List of keys, Urgency, Viewer, including Developer Center, Dealer, and Email/Automated Emails tasks. Scores resolved Smartling strings only; never creates Babel keys or posts Slack summaries.
 ---
 
 # Localization Slack On-Call
 
 Full end-to-end workflow for on-call channel localization requests. Parses the Slack bot message, resolves strings in Smartling, creates/reuses a job, and creates a Monday item + subitem.
+
+## Hard stops
+
+- Email/Automated Emails, Developer Center/Dev Center, and Dealer tasks do not have source keys in Babel. Never add, create, upload, sync, or infer Babel keys for these task types. Use Smartling-only resolution. If a request or artifact appears to require Babel for one of these task types, stop and report the conflict instead of continuing.
+- If a Slack payload provides a Smartling file name, component ID, app ID, tag, key list, or filtered Smartling URL, resolve that exact source scope. If the exact Smartling scope does not resolve, stop and report the unresolved name/scope. Do not continue with a fuzzy match, nearest file, renamed-looking file, similar content, similar date, or manually inferred substitute unless the user explicitly confirms that replacement.
+- Do not post an end-of-flow summary, Smartling/Monday recap, or “done” message in Slack.
 
 ## Input
 
@@ -140,5 +146,7 @@ Pass `score_color` to Phase 6.5.
 - **Do NOT create or update any Monday item or subitem**
 - **Do NOT reply to the Slack thread**
 - **Do NOT trigger Babel sync**
+- **Do NOT create, upload, sync, or infer Babel keys. Email/Automated Emails, Developer Center/Dev Center, and Dealer tasks are Smartling-only/no-Babel.**
+- **If an exact Smartling name/scope does not resolve, stop and report it instead of choosing a substitute.**
 - **Do NOT authorize the Smartling job**
 - Stop after Phase 5 — output only the content score table and recommendation
